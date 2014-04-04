@@ -6,7 +6,7 @@ CorduleJS (pronounced like "cordial") is short for **Core Module JS**. CorduleJS
 --------
 
 ####pushRequest
-The `pushRequest` function allows the user to pass a request string and a set of parameters. CorduleJS will attempt to match the request string with an observer that is listening for that type of request. Any observers listening for that request string will fire off their callback function with the set of parameters passed in during the call to `pushRequest`.
+The `pushRequest` function allows the user to pass a request string and a set of parameters. CorduleJS will attempt to match the request string with an observer that is listening for that type of request. Any observers listening for that request string will fire off their callback function with the set of parameters passed in during the call to `pushRequest`. An array of results from all listening observers will be returned.
 
 ####observe
 The `observe` function creates an observer, or a listener which fires its callback function when the request it is listening for is pushed.

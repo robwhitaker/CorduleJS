@@ -5,7 +5,8 @@
 var CorduleJS = (function() {
     
     var modules   = {},
-        observers = {};
+        observers = {},
+        removingObserver = "";
 
     /**
      * The addModule function adds a module to CorduleJS. If a module by the same name already exists
@@ -40,7 +41,7 @@ var CorduleJS = (function() {
      *
      * @param request    the string holding the name of the request
      * @param params     the parameter or set of parameters associated with a given request
-     * @return           true if an observer handles the request, false otherwise
+     * @return           an array of results returned by the observer(s), false if the request is not handled
      */ 
     var pushRequest = function(request, params) {
         if(!request)
@@ -49,11 +50,22 @@ var CorduleJS = (function() {
         if(!params)
             params = {};
 
-        if(observers[request]) {
-            for(var i = 0; i < observers[request].length; i++)
-                observers[request][i].callback(params);
+        removingObserver = "";
 
-            return true;
+        if(observers[request]) {
+            var results = [];
+            for(var i = 0; observers[request] && i < observers[request].length; i++) {
+                var result = observers[request][i].callback(params);
+                if(result)
+                    results.push(result);
+                
+                if(removingObserver === request) {
+                    i--;
+                    removingObserver = "";
+                }
+            }
+
+            return results;
         }
 
         return false;
@@ -97,7 +109,10 @@ var CorduleJS = (function() {
         if(observers[request]) {
             for(var i = 0; i<observers[request].length; i++) {
                 if(observers[request][i].observerModuleName === moduleRef._ReferralName) {
+                    removingObserver = request;
                     observers[request].splice(i,1);
+                    if(observers[request].length < 1) 
+                        observers[request] = null;
                     return true;
                 }
             }
